@@ -1,5 +1,6 @@
 const {readFile, writeFile, readdir} = require('fs/promises');
 const express = require('express');
+const { createId } = require('./utils');
 const app = express();
 
 const base = `${__dirname}/data`;
@@ -104,6 +105,20 @@ app.patch('/api/owners/:id', (req, res) => {
         })
         .then(([updated, ]) => res.status(201).send({msg : 'Success!', updated}))
         .catch((err) => console.log(err))
+});
+
+app.post('/api/owners', (req, res) => {
+    const {body} = req;
+
+    createId()
+        .then((values) => {
+            const newBody = {id: values, ...body}
+            return Promise.all([
+                newBody,
+                writeFile(`${base}/owners/${values}.json`, JSON.stringify(newBody, null, 2))
+            ])
+        })
+        .then(([newBody, ]) => res.status(201).send({msg: 'Success!', newBody}))
 });
 
 
