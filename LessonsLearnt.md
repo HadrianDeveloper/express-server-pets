@@ -10,3 +10,20 @@ Eg - to create this command `npm run dev` to replace `nodemon server.js`:
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js"
   },`
+
+
+### Examples of when to use Promise.all()
+Returning writeFile() and the updated object
+
+
+### patching an object
+Object.assign() seems great for updating unfixed nuymber of values in an obj:
+
+  `readFile(`file.json`, 'utf8')
+      .then((originalObj) => {
+          const updated = Object.assign(JSON.parse(originalObj), update)
+          return Promise.all([
+              updated,
+              writeFile(`file.json`, JSON.stringify(updated, null, 2))
+          ])
+      .then(() => ... )
