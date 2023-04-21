@@ -109,8 +109,7 @@ app.patch('/api/owners/:id', (req, res) => {
 
 app.post('/api/owners', (req, res) => {
     const {body} = req;
-
-    createId()
+    createId('owners')
         .then((values) => {
             const newBody = {id: values, ...body}
             return Promise.all([
@@ -120,6 +119,20 @@ app.post('/api/owners', (req, res) => {
         })
         .then(([newBody, ]) => res.status(201).send({msg: 'Success!', newBody}))
 });
+
+app.post('/api/owners/:id/pets', (req, res) => {
+    const { body, params } = req;
+    createId('pets')
+    .then((id) => {
+        const newPet = {id: id, ...body};
+        return Promise.all([
+            newPet,
+            writeFile(`${base}/pets/${id}.json`, JSON.stringify(newPet, null, 2))
+        ])
+    })
+    .then(([newPet, ]) => res.status(201).send({msg: 'Success', newPet}))
+    .catch((err) => console.log(err))
+})
 
 
 
