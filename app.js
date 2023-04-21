@@ -4,6 +4,8 @@ const app = express();
 
 const base = `${__dirname}/data`;
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
     res.send({status: res.statusCode, msg: 'Hello World!'})
 })
@@ -89,6 +91,22 @@ app.get('/api/pets/:id', (req, res) => {
         .then((petObj) => res.status(200).send(petObj))
         .catch((err) => console.log(err.path))
 });
+
+app.patch('/api/owners/:id', (req, res) => {
+    const {body, params} = req;
+    readFile(`${base}/owners/${params.id}.json`, 'utf8')
+        .then((data) => {
+            const updated = Object.assign(JSON.parse(data), body)
+            return Promise.all([
+                updated,
+                writeFile(`${base}/owners/${params.id}.json`, JSON.stringify(updated, null, 2))
+            ])
+        })
+        .then(([updated, ]) => res.status(201).send({msg : 'Success!', updated}))
+        .catch((err) => console.log(err))
+});
+
+
 
 app.listen(5555, (err) => {
     console.log(err ? err : 'Express server listening...')
