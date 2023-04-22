@@ -1,6 +1,5 @@
 const { readdir } = require("fs/promises")
 
-
 exports.createId = (folderName) => {
     const prefix = folderName === 'owners' ? 'o' : 'p';
     return readdir(`${__dirname}/data/${folderName}`)
