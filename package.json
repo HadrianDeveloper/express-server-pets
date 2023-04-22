@@ -1,8 +1,8 @@
 {
   "name": "express-server-petsowners",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "project to master the setup of Express.js server and CRUD handlers",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js"

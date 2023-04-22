@@ -4,8 +4,10 @@ const { createId } = require('./utils');
 const app = express();
 
 const base = `${__dirname}/data`;
-
 app.use(express.json());
+
+
+// -------------------   GET HANDLERS --------------------------
 
 app.get('/', (req, res) => {
     res.send({status: res.statusCode, msg: 'Hello World!'})
@@ -93,6 +95,10 @@ app.get('/api/pets/:id', (req, res) => {
         .catch((err) => console.log(err.path))
 });
 
+
+// -------------------   POST / PATCH HANDLERS --------------------------
+
+
 app.patch('/api/owners/:id', (req, res) => {
     const {body, params} = req;
     readFile(`${base}/owners/${params.id}.json`, 'utf8')
@@ -134,6 +140,9 @@ app.post('/api/owners/:id/pets', (req, res) => {
     .catch((err) => console.log(err))
 });
 
+// -------------------   DELETE HANDLERS --------------------------
+
+
 app.delete('/api/pets/:id', (req, res) => {
     const {params} = req;
     console.log(params);
@@ -143,22 +152,8 @@ app.delete('/api/pets/:id', (req, res) => {
 });
 
 
+// ----------------------------------------------------------------
 
 app.listen(5555, (err) => {
     console.log(err ? err : 'Express server listening...')
 });
-
-
-
-
-/*
-{
-  "name": "God King Rox",
-  "avatarUrl": "https://media.mnn.com/assets/images/2010/02/baby-orangutan.jpg.1000x0_q80_crop-smart.jpg",
-  "favouriteFood": "Chips",
-  "owner": "o5",
-  "age": 17,
-  "temperament": "elegiac"
-}
-
-*/
