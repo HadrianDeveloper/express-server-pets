@@ -1,4 +1,4 @@
-const {readFile, writeFile, readdir} = require('fs/promises');
+const {readFile, writeFile, readdir, rm} = require('fs/promises');
 const express = require('express');
 const { createId } = require('./utils');
 const app = express();
@@ -132,10 +132,33 @@ app.post('/api/owners/:id/pets', (req, res) => {
     })
     .then(([newPet, ]) => res.status(201).send({msg: 'Success', newPet}))
     .catch((err) => console.log(err))
-})
+});
+
+app.delete('/api/pets/:id', (req, res) => {
+    const {params} = req;
+    console.log(params);
+    rm(`${base}/pets/${params.id}.json`)
+    .then(() => res.status(200).send({msg: 'Pet successfully deleted!'}))
+    .catch((err) => console.log(err))
+});
 
 
 
 app.listen(5555, (err) => {
     console.log(err ? err : 'Express server listening...')
 });
+
+
+
+
+/*
+{
+  "name": "God King Rox",
+  "avatarUrl": "https://media.mnn.com/assets/images/2010/02/baby-orangutan.jpg.1000x0_q80_crop-smart.jpg",
+  "favouriteFood": "Chips",
+  "owner": "o5",
+  "age": 17,
+  "temperament": "elegiac"
+}
+
+*/
