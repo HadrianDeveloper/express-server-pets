@@ -1,4 +1,4 @@
-const {readFile, writeFile, readdir, rm} = require('fs/promises');
+const {readFile, writeFile, readdir, rm, unlink} = require('fs/promises');
 const express = require('express');
 const { createId } = require('./utils');
 const app = express();
@@ -126,6 +126,7 @@ app.post('/api/owners', (req, res) => {
         .then(([newBody, ]) => res.status(201).send({msg: 'Success!', newBody}))
 });
 
+// To optimise! NB - owner id in URL
 app.post('/api/owners/:id/pets', (req, res) => {
     const { body, params } = req;
     createId('pets')
@@ -142,18 +143,41 @@ app.post('/api/owners/:id/pets', (req, res) => {
 
 // -------------------   DELETE HANDLERS --------------------------
 
-
 app.delete('/api/pets/:id', (req, res) => {
     const {params} = req;
-    console.log(params);
     rm(`${base}/pets/${params.id}.json`)
-    .then(() => res.status(200).send({msg: 'Pet successfully deleted!'}))
-    .catch((err) => console.log(err))
+        .then(() => res.status(200).send({msg: 'Pet successfully deleted!'}))
+        .catch((err) => console.log(err))
+});
+
+//needs reviewing:
+app.delete('/api/owners/:id', (req, res) => {
+    const { params } = req;
+
+    readdir(`${base}/pets`)
+        .then((fileList) => {
+            let count = 0;
+
+            fileList.forEach((pet) => {
+               readFile(`${__dirname}/data/pets/${pet}`, 'utf8')
+                .then((data) => {
+                    const parsedPet = JSON.parse(data);
+
+                    if (parsedPet.owner === params.id) {
+                        rm(`${base}/pets/${pet}`)
+                    }   
+                    if (++count === fileList.length) {
+                        rm(`${base}/owners/${params.id}`)
+                    }             
+                })
+                .catch((err) => console.error(err))
+            })
+        })
 });
 
 
 // ----------------------------------------------------------------
 
-app.listen(5555, (err) => {
+app.listen(8080, (err) => {
     console.log(err ? err : 'Express server listening...')
 });
